@@ -3,6 +3,7 @@ from functools import wraps
 
 from django.conf import settings
 from django.http import HttpResponse
+import collections
 
 class HttpResponseTooManyRequests(HttpResponse):
     status_code = getattr(settings, 'RATELIMIT_STATUS_CODE', 403)
@@ -80,7 +81,7 @@ def ratelimit(
                 response = fn(request, *args, **kw)
 
             if _method_match(request, method) and \
-                    (increment is None or (callable(increment) and increment(
+                    (increment is None or (isinstance(increment, collections.Callable) and increment(
                         request, response
                     ))):
                 _backend.count(func_name, request, ip, field, period)

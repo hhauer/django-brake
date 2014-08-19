@@ -53,7 +53,7 @@ class CacheBackend(BaseBackend):
         """Increment counters for all relevant cache_keys given a request."""
         counters = dict((key, 1) for key in self._keys(
             func_name, request, ip, field, period))
-        counters.update(cache.get_many(counters.keys()))
+        counters.update(cache.get_many(list(counters.keys())))
         for key in counters:
             counters[key] += 1
         cache.set_many(counters, timeout=period)

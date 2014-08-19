@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.utils import unittest
 
 from brake.decorators import ratelimit
+import collections
 
 
 class MockRLKeys(object):
@@ -29,7 +30,7 @@ class FakeClient(object):
 
     def post(self, view_func, data, headers=None):
         request = FakeRequest(headers)
-        if callable(view_func):
+        if isinstance(view_func, collections.Callable):
             request.POST = data
 
             return view_func(request)
@@ -146,8 +147,8 @@ class TestRateLimiting(RateLimitTestCase):
 
     def setUp(self):
         super(TestRateLimiting, self).setUp()
-        self.good_payload = {'username': u'us\xe9r', 'password': 'correct'}
-        self.bad_payload = {'username': u'us\xe9r'}
+        self.good_payload = {'username': 'us\xe9r', 'password': 'correct'}
+        self.bad_payload = {'username': 'us\xe9r'}
 
     def test_allow_some_failures(self):
         """Test to make sure that short-term thresholds ignore older ones."""
